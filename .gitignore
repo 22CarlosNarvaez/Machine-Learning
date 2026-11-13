@@ -13,9 +13,3 @@ __pycache__/
 .env
 .env.*
 
-# Datos y modelos grandes
-data/
-models/
-*.pkl
-*.joblib
-*.h5
