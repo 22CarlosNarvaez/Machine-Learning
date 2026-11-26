@@ -140,7 +140,7 @@
   function updateChart(metros, precioEstimado) {
     var area = Math.min(Math.max(metros, CHART_MIN_AREA), CHART_MAX_AREA);
     var value = Math.min(Math.max(precioEstimado, 0), CHART_MAX_PRICE);
-    vaR x = 24 + ((area - CHART_MIN_AREA) / (CHART_MAX_AREA - CHART_MIN_AREA)) * 276;
+    var x = 24 + ((area - CHART_MIN_AREA) / (CHART_MAX_AREA - CHART_MIN_AREA)) * 276;
     var y = 92 - (value / CHART_MAX_PRICE) * 80;
 
     chartGuide.setAttribute("x1", x);
