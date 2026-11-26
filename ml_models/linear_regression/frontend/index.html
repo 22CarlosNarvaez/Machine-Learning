@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Tasador de viviendas basado en un modelo de regresión lineal entrenado con datos de superficie y precio."
+    />
+    <title>TASADOR DE VIVIENDAS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+
+    <main class="card">
+      <header class="card__header">
+        <h1>TASADOR DE VIVIENDAS</h1>
+      </header>
+
+      <section class="card__body" aria-labelledby="form-title">
+        <div class="section-head">
+          <h2 id="form-title">Tasación de vivienda</h2>
+          <p>Ingresa el área útil para estimar su valor.</p>
+        </div>
+
+        <form id="tasacion-form" novalidate>
+          <div class="field">
+            <label for="metros-cuadrados">Superficie</label>
+            <div class="input-group">
+              <input
+                id="metros-cuadrados"
+                name="metros_cuadrados"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                placeholder="Selecciona una superficie"
+                autocomplete="off"
+                required
+                aria-describedby="metros-help metros-error"
+              />
+              <span class="input-group__unit" aria-hidden="true">m²</span>
+            </div>
+
+            <p class="hint" id="metros-help">Valores exactos del modelo:</p>
+            <div class="presets" role="group" aria-label="Valores exactos disponibles">
+              <button class="preset" type="button" data-value="70">70 m²</button>
+              <button class="preset" type="button" data-value="80">80 m²</button>
+              <button class="preset" type="button" data-value="90">90 m²</button>
+              <button class="preset" type="button" data-value="110">110 m²</button>
+              <button class="preset" type="button" data-value="120">120 m²</button>
+              <button class="preset" type="button" data-value="130">130 m²</button>
+              <button class="preset" type="button" data-value="140">140 m²</button>
+              <button class="preset" type="button" data-value="150">150 m²</button>
+            </div>
+            <p class="error" id="metros-error" role="alert" hidden></p>
+          </div>
+
+          <button class="button" id="submit-button" type="submit">
+            <span id="submit-label">Calcular tasación</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div class="separator" aria-hidden="true"></div>
+
+        <div class="chart-card">
+          <div class="chart-card__head">
+            <span class="chart-card__title">Tendencia del modelo</span>
+            <span class="chart-card__badge">ML</span>
+          </div>
+          <svg
+            class="chart"
+            viewBox="0 0 320 104"
+            role="img"
+            aria-label="Gráfico de dispersión con la línea de tendencia del modelo"
+          >
+            <defs>
+              <linearGradient id="chart-area" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2f9ec4" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#2f9ec4" stop-opacity="0" />
+              </linearGradient>
+              <filter id="chart-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <line class="chart__grid" x1="24" y1="30" x2="300" y2="30" />
+            <line class="chart__grid" x1="24" y1="55" x2="300" y2="55" />
+            <line class="chart__grid" x1="24" y1="80" x2="300" y2="80" />
+            <line class="chart__axis" x1="24" y1="92" x2="300" y2="92" />
+
+            <path class="chart__area" d="M24 84 L300 18 L300 92 L24 92 Z" />
+            <line class="chart__trend" x1="24" y1="84" x2="300" y2="18" filter="url(#chart-glow)" />
+
+            <g class="chart__points">
+              <circle cx="24" cy="84" r="3" />
+              <circle cx="58.5" cy="77" r="3" />
+              <circle cx="93" cy="60" r="3" />
+              <circle cx="162" cy="57" r="3" />
+              <circle cx="196.5" cy="45" r="3" />
+              <circle cx="231" cy="36" r="3" />
+              <circle cx="265.5" cy="27" r="3" />
+              <circle cx="300" cy="18" r="3" />
+            </g>
+
+            <line class="chart__guide" id="chart-guide" x1="0" y1="0" x2="0" y2="92" hidden />
+            <circle class="chart__marker" id="chart-marker" cx="0" cy="0" r="6" hidden />
+          </svg>
+          <div class="chart-card__axis" aria-hidden="true">
+            <span>70 m²</span>
+            <span>150 m²</span>
+          </div>
+        </div>
+
+        <section class="result" id="result" aria-labelledby="result-title" hidden>
+          <p class="result__label" id="result-title">Precio estimado</p>
+          <p class="result__value" id="precio">—</p>
+          <p class="result__note">Estimación basada en los datos de entrenamiento.</p>
+          <dl class="metrics">
+            <div class="metric">
+              <dt>Superficie</dt>
+              <dd id="result-superficie">—</dd>
+            </div>
+            <div class="metric">
+              <dt>Precio por m²</dt>
+              <dd id="result-por-metro">—</dd>
+            </div>
+            <div class="metric">
+              <dt>Moneda</dt>
+              <dd id="result-moneda">—</dd>
+            </div>
+          </dl>
+        </section>
+
+        <p class="placeholder" id="placeholder">
+          El resultado de la tasación se mostrará aquí.
+        </p>
+
+        <p class="api-error" id="api-error" role="alert" hidden></p>
+      </section>
+
+      <footer class="card__footer">
+        <div class="identity">
+          <p class="identity__name">Carlos Arturo Narvaez</p>
+          <p class="identity__meta">Ficha 3494620</p>
+          <p class="identity__career">TECNOLOGIA ANALISIS Y DESARROLLO DE SOFTWARE</p>
+        </div>
+
+        <div class="footer__status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>API: <span id="api-origin">—</span></span>
+          <button
+            class="link-button"
+            id="toggle-settings"
+            type="button"
+            aria-expanded="false"
+            aria-controls="settings"
+          >
+            Configurar endpoint
+          </button>
+        </div>
+
+        <form class="settings" id="settings" hidden>
+          <label for="api-url">URL base de la API</label>
+          <input
+            id="api-url"
+            name="api-url"
+            type="url"
+            placeholder="https://tu-api.onrender.com"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <div class="settings__row">
+            <button class="button button--small" type="submit">Guardar</button>
+            <button class="link-button" id="reset-settings" type="button">Restablecer</button>
+          </div>
+          <p class="settings__note">
+            Déjalo vacío para usar el mismo origen. Se guarda solo en este navegador.
+          </p>
+        </form>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
