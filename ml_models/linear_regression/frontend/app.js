@@ -50,7 +50,7 @@
     } catch (error) {
       /* Almacenamiento no disponible: se usa el origen por defecto. */
     }
-    return location.protocol === "http:" || location.protocol === "https:" ? "" : LOCAL_API;
+    return "https://backend-production-6fde794d.up.railway.app";
   }
 
   var apiBase = defaultBase();
@@ -140,7 +140,7 @@
   function updateChart(metros, precioEstimado) {
     var area = Math.min(Math.max(metros, CHART_MIN_AREA), CHART_MAX_AREA);
     var value = Math.min(Math.max(precioEstimado, 0), CHART_MAX_PRICE);
-    var x = 24 + ((area - CHART_MIN_AREA) / (CHART_MAX_AREA - CHART_MIN_AREA)) * 276;
+    vaR x = 24 + ((area - CHART_MIN_AREA) / (CHART_MAX_AREA - CHART_MIN_AREA)) * 276;
     var y = 92 - (value / CHART_MAX_PRICE) * 80;
 
     chartGuide.setAttribute("x1", x);
